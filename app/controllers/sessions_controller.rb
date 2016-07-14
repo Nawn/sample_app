@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
     user = User.find_by(email: user_info[:email].downcase)
     if user && user.authenticate(user_info[:password])
       log_in user
-      remember user
+      user_info[:remember_me] == '1' ? remember(user) : forget(user)
       redirect_to user
     else
       flash.now[:danger] = 'Invalid email/password combination'
@@ -22,6 +22,6 @@ class SessionsController < ApplicationController
 
   private
   def session_credentials
-    params.require(:session).permit(:email, :password)
+    params.require(:session).permit(:email, :password, :remember_me)
   end
 end
